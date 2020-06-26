@@ -1,0 +1,76 @@
+<script type="text/x-red" data-template-name="ui-upload">
+	<div class="form-row" id="template-row-group">
+		<label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+		<input type="text" id="node-input-group" />
+	</div>
+	<div class="form-row" id="template-row-size">
+		<label><i class="fa fa-object-group"></i> Size</label>
+		<input type="hidden" id="node-input-width" />
+		<input type="hidden" id="node-input-height" />
+		<button class="editor-button" id="node-input-size"></button>
+	</div>
+	<div class="form-row">
+		<label for="node-input-title"><i class="fa fa-i-cursor"></i> Title</label>
+		<input type="text" id="node-input-title" />
+	</div>
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" />
+	</div>
+	<div class="form-row">
+		<label for="node-input-step"><i class="fa fa-sign-in"></i> Chunk size (kB)</label>
+		<input type="number" id="node-input-chunk" min="1" max="10240" />
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="ui-upload">
+	<p>UI widget node for uploading files content by Socket.io streaming</p>
+</script>
+
+<script>
+function uiUploadConf(NAME) {
+	const ICON = 'white-globe.svg';
+
+	return {
+		category: 'dashboard',
+		color: 'rgb(63, 173, 181)',
+		defaults: {
+			group: {type: 'ui_group', required: false},
+			title: {value: 'upload'},
+			name: {value: ''},
+			order: {value: 0},
+			width: {
+				value: 0,
+				validate: function (v) {
+					const width = v || 0;
+					const currentGroup = $('#node-input-group').val() || this.group;
+					const groupNode = RED.nodes.node(currentGroup);
+					const valid = !groupNode || +width <= +groupNode.width;
+					$('#node-input-size').toggleClass('input-error', !valid);
+					return valid;
+				},
+			},
+			height: {value: 5},
+			chunk: {value: 1024},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: ICON,
+		paletteLabel: NAME,
+		label: function () { return this.name || NAME; },
+		oneditprepare: function () {
+			$('#node-input-size').elementSizer({
+				width: '#node-input-width',
+				height: '#node-input-height',
+				group: '#node-input-group',
+			});
+		},
+		oneditsave: function () {
+		},
+		oneditresize: function (size) {
+		},
+	};
+}
+
+RED.nodes.registerType('ui-upload', uiUploadConf('upload'));
+</script>
