@@ -21,8 +21,11 @@
 			"ui-upload": "ui-upload.js"
 		}
 	},
-	"repository" : {
-		"type" : "git",
+	"repository": {
+		"type": "git",
 		"url": "https://github.com/alexandrainst/node-red-contrib-ui-upload"
+	},
+	"scripts": {
+		"test": "npm -v"
 	}
 }
