@@ -54,11 +54,34 @@ module.exports = function (RED) {
 			$scope.stop = false;
 
 			const chunk = 1024 * Math.max(staticConfig.chunk || 1024, 1);
+			const id = file.name + ';' + file.size + ';' + Date.now();
+			const count = Math.ceil(file.size / chunk);
 			let loaded = 0;
+			let i = -1;
 
 			const fileReader = new FileReader();
 			fileReader.onload = function (e) {
+				i++;
 				if ($scope.stop) {
+					//Send special paquet to inform the rest of the pipeline
+					$scope.send({
+						file: {
+							lastModified: file.lastModified,
+							name: file.name,
+							size: file.size,
+							type: file.type,
+						},
+						parts: {
+							id: id,
+							type: 'string',
+							ch: '',
+							index: i,
+							count: i + 1,
+							chunk: chunk,
+							abort: true,
+						},
+						payload: '',
+					});
 					$scope.stopClick();
 					return;
 				} else if ($scope.pause) {
@@ -66,15 +89,19 @@ module.exports = function (RED) {
 					return;
 				}
 				$scope.send({
-					blob: {
-						start: loaded,
-						end: Math.min(loaded + chunk, file.size),
-					},
 					file: {
 						lastModified: file.lastModified,
 						name: file.name,
 						size: file.size,
 						type: file.type,
+					},
+					parts: {
+						id: id,
+						type: 'string',
+						ch: '',
+						index: i,
+						count: count,
+						chunk: chunk,
 					},
 					payload: e.target.result,
 				});
