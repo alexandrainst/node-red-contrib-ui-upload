@@ -51,16 +51,16 @@ function initController($scope, events) {
 		$scope.unique = $scope.$eval('$id');
 		$scope.title = config.title || config.name || 'Upload';
 		$scope.chunkCallback = null;
-		$scope.chunkWelcome = false;
+		$scope.downstreamReady = false;
 	};
 
 	$scope.$watch('msg', function (msg) {
 		//Message received from back-end
-		if (msg && msg.payload && msg.payload.tick && !$scope.stop && !$scope.pause) {
+		if (msg && msg.tick && !$scope.stop && !$scope.pause) {
 			if ($scope.chunkCallback) {
 				$scope.chunkCallback.f($scope.chunkCallback.e);
 			} else {
-				$scope.chunkWelcome = true;
+				$scope.downstreamReady = true;
 			}
 		}
 	});
@@ -69,17 +69,17 @@ function initController($scope, events) {
 		const div = document.getElementById('ui-upload-' + $scope.unique);
 		const progress = div.querySelector('progress');
 		$scope.stop = false;
-		$scope.chunkWelcome = true;
+		$scope.downstreamReady = true;
 
 		const chunk = 1024 * Math.max($scope.config.chunk || 1024, 1);
-		const id = file.name + ';' + file.size + ';' + Date.now();
 		const count = Math.ceil(file.size / chunk);
+		const partsId = file.name + ';' + file.size + ';' + Date.now();
+		let partsIndex = -1;
 		let loaded = 0;
-		let i = -1;
 
+		let blob;
 		const fileReader = new FileReader();
 		fileReader.onload = function (e) {
-			i++;
 			if ($scope.stop) {
 				//Send special paquet to inform the rest of the pipeline
 				$scope.send({
@@ -90,11 +90,11 @@ function initController($scope, events) {
 						type: file.type,
 					},
 					parts: {
-						id: id,
+						id: partsId,
 						type: 'string',
 						ch: '',
-						index: i,
-						count: i + 1,
+						index: partsIndex + 1,
+						count: partsIndex + 2,
 						chunk: chunk,
 						abort: true,
 					},
@@ -102,12 +102,13 @@ function initController($scope, events) {
 				});
 				$scope.stopClick();
 				return;
-			} else if (!$scope.chunkCallback && ($scope.pause || !$scope.chunkWelcome)) {
+			} else if (!$scope.chunkCallback && ($scope.pause || !$scope.downstreamReady)) {
 				$scope.chunkCallback = { f: fileReader.onload, e: e };
 				return;
 			}
+			partsIndex++;
 			$scope.chunkCallback = false;
-			$scope.chunkWelcome = false;
+			$scope.downstreamReady = false;
 			$scope.send({
 				file: {
 					lastModified: file.lastModified,
@@ -116,27 +117,38 @@ function initController($scope, events) {
 					type: file.type,
 				},
 				parts: {
-					id: id,
+					id: partsId,
 					type: 'string',
 					ch: '',
-					index: i,
+					index: partsIndex,
 					count: count,
 					chunk: chunk,
 				},
 				payload: e.target.result,
+				complete: partsIndex + 1 >= count ? true : undefined,
 			});
 			loaded += chunk;
 			progress.value = 100 * loaded / file.size;
 			if (loaded <= file.size) {
 				blob = file.slice(loaded, loaded + chunk);
-				fileReader.readAsBinaryString(blob);
+				if ($scope.config.transfer === 'text') {
+					fileReader.readAsText(blob, 'Windows-1252');
+				} else {
+					fileReader.readAsArrayBuffer(blob);
+				}
 			} else {
 				loaded = file.size;
 				$scope.stopClick();
 			}
 		};
-		let blob = file.slice(0, chunk);
-		fileReader.readAsBinaryString(blob);
+
+		blob = file.slice(0, chunk);
+		if ($scope.config.transfer === 'text') {
+			//NB: Can only be a single-byte encoding / ASCII, so no Unicode / UTF-8!
+			fileReader.readAsText(blob, 'Windows-1252');
+		} else {
+			fileReader.readAsArrayBuffer(blob);
+		}
 	}
 
 	let backgroundColor = '';
@@ -203,7 +215,7 @@ function initController($scope, events) {
 	$scope.stopClick = function (e) {
 		$scope.stop = true;
 		$scope.pause = false;
-		$scope.chunkWelcome = false;
+		$scope.downstreamReady = false;
 		$scope.chunkCallback = null;
 		const div = document.getElementById('ui-upload-' + $scope.unique);
 		div.querySelector('progress').value = 0;
@@ -218,21 +230,42 @@ function initController($scope, events) {
 }
 
 /**
- * Return true if the node has any input wired to it, false otherwise.
+ * Return an incoming node ID if the node has any input wired to it, false otherwise.
+ * If filter callback is not null, then this function filters incoming nodes.
  */
-function nodeHasInput(node) {
-	if (node && node._flow && node._flow.global) {
-		const allNodes = node._flow.global.allNodes;
-		for (const node2Id of Object.keys(allNodes)) {
-			const node2 = allNodes[node2Id];
-			if (node2.wires) {
-				for (const wireId of Object.keys(node2.wires)) {
-					const wire = node2.wires[wireId];
-					for (const nodeId of wire) {
-						if (node.id === nodeId) {
-							return true;
+function findInputNodeId(toNode, filter = null) {
+	if (toNode && toNode._flow && toNode._flow.global) {
+		const allNodes = toNode._flow.global.allNodes;
+		for (const fromNodeId of Object.keys(allNodes)) {
+			const fromNode = allNodes[fromNodeId];
+			if (fromNode.wires) {
+				for (const wireId of Object.keys(fromNode.wires)) {
+					const wire = fromNode.wires[wireId];
+					for (const toNodeId of wire) {
+						if (toNode.id === toNodeId && (!filter || filter(fromNode))) {
+							return fromNode.id;
 						}
 					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Return an outgoing node ID if the node has any output wired to it, false otherwise.
+ * If filter callback is not null, then this function filters outgoing nodes.
+ */
+function findOutputNodeId(fromNode, filter = null) {
+	if (fromNode && fromNode.wires && fromNode._flow && fromNode._flow.global) {
+		const allNodes = fromNode._flow.global.allNodes;
+		for (const wireId of Object.keys(fromNode.wires)) {
+			const wire = fromNode.wires[wireId];
+			for (const toNodeId of wire) {
+				const toNode = allNodes[toNodeId];
+				if (!filter || filter(toNode)) {
+					return toNode.id;
 				}
 			}
 		}
@@ -246,6 +279,10 @@ module.exports = function (RED) {
 	function uiUpload(config) {
 		const node = this;
 
+		//Declare the ability of this node to consume ticks from downstream for back-pressure
+		node.tickConsumer = true;
+		let tickDownstreamId;
+
 		try {
 			if (!ui) {
 				// load Dashboard API
@@ -253,7 +290,6 @@ module.exports = function (RED) {
 			}
 
 			RED.nodes.createNode(node, config);
-			const hasInput = nodeHasInput(node);
 
 			//Defined in https://github.com/node-red/node-red-dashboard/blob/39b095586bdbd517ffbce1efff35227283edda4c/index.js
 			const done = ui.addWidget({
@@ -275,13 +311,14 @@ module.exports = function (RED) {
 
 				//callback to prepare the message that is sent to the output
 				beforeSend: function (msg, orig) {
-					if (!hasInput) {
-						//Send default tick for back-pressure
-						node.receive({
-							payload: {
-								tick: true,
-							},
-						});
+					if (tickDownstreamId === undefined) {
+						//Search for any output node handling ticks for back-pressure,
+						//or any input node (which must take this responsability)
+						tickDownstreamId = findOutputNodeId(node, n => RED.nodes.getNode(n.id).tickProvider) || findInputNodeId(node);
+					}
+					if (!tickDownstreamId) {
+						//If there is no tick provider downstream, send default tick for back-pressure
+						node.receive({ tick: true });
 					}
 					if (orig) {
 						return orig.msg;
