@@ -1,3 +1,5 @@
+"use strict";
+
 function html(config) {
 	const jsonConfig = JSON.stringify(config);
 	return String.raw`
@@ -45,6 +47,7 @@ function html(config) {
 
 //NB: This function goes through a toString + eval by Node-RED Dashboard, so no scope
 function initController($scope, events) {
+	/* jshint browser:true */
 
 	$scope.init = function (config) {
 		$scope.config = config;
@@ -277,7 +280,7 @@ module.exports = function (RED) {
 	let ui;
 
 	function uiUpload(config) {
-		const node = this;
+		const node = this;	// jshint ignore:line
 
 		//Declare the ability of this node to consume ticks from downstream for back-pressure
 		node.tickConsumer = true;

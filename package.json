@@ -9,6 +9,8 @@
 		"ui",
 		"dashboard",
 		"node-red",
+		"node-red-contrib",
+		"node-red-ui",
 		"nodered"
 	],
 	"author": {
@@ -26,7 +28,19 @@
 		"type": "git",
 		"url": "https://github.com/alexandrainst/node-red-contrib-ui-upload"
 	},
+	"devDependencies": {
+		"jshint": "^2.12.0"
+	},
+	"jshintConfig": {
+		"esversion": 8,
+		"node": true,
+		"multistr": true,
+		"sub": true
+	},
 	"scripts": {
+		"start": "node ./index.js",
+		"lint": "node ./node_modules/.bin/jshint *.js",
+		"pretest": "npm run-script lint",
 		"test": "npm -v"
 	}
 }
