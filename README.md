@@ -16,10 +16,16 @@ Example: [flows.json](doc/flows.json)
 
 ![Node-RED flow](doc/flow.png)
 
+But this node really shines when combined with the [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines) node, which can split in a more efficient way, e.g. safe for Unicode and with built-in backpressure for automatic buffering optimisation.
+
+Example: [flows.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/master/doc/flows.json)
+
+![Node-RED flow](https://raw.githubusercontent.com/alexandrainst/node-red-contrib-chunks-to-lines/master/doc/flow.png)
+
 ## Transfer types
 
-* When using *binary* transfer type, the data is uploaded as chunks of byte arrays. This mode can safely transmit any type of file, but requires a transformation before further use.
-* When using *text* tranfer type, the data is uploaded as chunks of ASCII (more precisely Windows-1252 encoding). This mode is **not able** to properly transmit non-ASCII data such as multibyte strings (e.g. Unicode / UTF-8) or binary files, but is convinient for basic ASCII text.
+* When using *binary* transfer type, the data is uploaded as chunks of byte arrays. This mode can safely transmit any type of file, but requires a transformation before further use (which [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines) can handle).
+* When using *text* transfer type, the data is uploaded as chunks of ASCII (more precisely Windows-1252 encoding). This mode is **not able** to properly transmit non-ASCII data such as multibyte strings (e.g. Unicode / UTF-8) or binary files, but is convenient for basic ASCII text.
 
 ## Backpressure
 
@@ -27,7 +33,10 @@ This node supports *backpressure* / *flow control*:
 it can wait for a *tick* before uploading the next chunk of data,
 to make sure the rest of your Node-RED flow is ready to process more data, instead of risking an out-of-memory condition.
 
-For that, just send `{ tick: true }` to the node for triggering the upload of the next chunk of data.
+To make this behaviour potentially automatic (avoiding manual wires), this node declares its ability by exposing a truthy `node.tickConsumer` for downstream nodes to detect this feature.
+Using this approach, the backpressure is done automatically when using the [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines) node.
+
+For a manual approach, just send `{ tick: true }` to the node for triggering the upload of the next chunk of data.
 
 By default, in absence of wired input on this node, a tick will be automatically generated upon full reception of a chunk of data to trigger the upload of the next one.
 
