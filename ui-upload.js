@@ -11,23 +11,32 @@ function html(config) {
 	flex-wrap: wrap;
 	justify-content: space-evenly;
 }
-.ui-upload p {
+.ui-upload p.title {
 	background: transparent !important;
-	font-size: larger;
+	font-size: 175%;
 	text-align: center;
 	width: 99%;
 }
-.ui-upload progress {
+.ui-upload > progress {
 	width: 90%;
 }
-.ui-upload button {
+.ui-upload.done > progress {
+	display: none;
+}
+.ui-upload > p.result {
+	font-size: 150%;
+}
+.ui-upload:not(.done) > p.result {
+	display: none;
+}
+.ui-upload > button {
 	background: transparent;
 	border: 0;
 	font-size: xx-large;
 	margin: 0;
 	padding: 0;
 }
-.ui-upload button[disabled] {
+.ui-upload > button[disabled] {
 	filter: grayscale(1) brightness(1.5);
 }
 </style>
@@ -36,8 +45,9 @@ function html(config) {
 	ng-init='init(` + jsonConfig + `)'
 	ng-on-dragleave="ondragleave($event)" ng-on-dragenter="ondragenter($event)"
 	ng-on-dragover="ondragover($event)" ng-on-drop="ondrop($event)">
-	<p>{{title}}</p>
+	<p class="title">{{title}}</p>
 	<progress value="0" max="100"></progress>
+	<p class="result">✔️ <small>0s</small></p>
 	<input type="file" ng-on-change="onchange($event)" name="ui-upload-filename" />
 	<button class="play" ng-click="playClick($event)" disabled="disabled">▶️</button>
 	<button class="stop" ng-click="stopClick($event)" disabled="disabled">⏹️</button>
@@ -70,10 +80,13 @@ function initController($scope, events) {
 
 	function sendFile(file) {
 		const div = document.getElementById('ui-upload-' + $scope.unique);
+		div.classList.remove('done');
 		const progress = div.querySelector('progress');
 		$scope.stop = false;
 		$scope.downstreamReady = true;
 
+		delete $scope.duration;
+		const startTime = Date.now() - 1;
 		const chunk = 1024 * Math.max($scope.config.chunk || 1024, 1);
 		const count = Math.ceil(file.size / chunk);
 		const partsId = file.name + ';' + file.size + ';' + Date.now();
@@ -141,6 +154,7 @@ function initController($scope, events) {
 				}
 			} else {
 				loaded = file.size;
+				$scope.duration = Math.ceil((Date.now() - startTime) / 1000);
 				$scope.stopClick();
 			}
 		};
@@ -222,6 +236,10 @@ function initController($scope, events) {
 		$scope.chunkCallback = null;
 		const div = document.getElementById('ui-upload-' + $scope.unique);
 		div.querySelector('progress').value = 0;
+		if ($scope.duration) {
+			div.classList.add('done');
+			div.querySelector('p.result > small').innerHTML = '' + $scope.duration + 's';
+		}
 		div.querySelector('.play').innerHTML = '▶️';
 		div.querySelector('.play').disabled = false;
 		div.querySelector('.stop').disabled = true;

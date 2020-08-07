@@ -19,7 +19,7 @@
 	</div>
 	<div class="form-row">
 		<label for="node-input-chunk"><i class="fa fa-sign-in"></i> Chunk size (kB)</label>
-		<input type="number" id="node-input-chunk" min="1" max="10240" />
+		<input type="number" id="node-input-chunk" min="1" max="2048" />
 	</div>
 	<div class="form-row">
 		<label for="node-input-transfer"><i class="fa fa-flag"></i> Transfer type</label>
@@ -58,7 +58,7 @@ function uiUploadConf(NAME) {
 				},
 			},
 			height: {value: 5},
-			chunk: {value: 1024},
+			chunk: {value: 256},
 			transfer: {value: 'binary'},
 		},
 		inputs: 1,
