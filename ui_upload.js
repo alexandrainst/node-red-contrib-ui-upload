@@ -4,51 +4,51 @@ function html(config) {
 	const jsonConfig = JSON.stringify(config);
 	return String.raw`
 <style>
-.ui-upload {
+.ui_upload {
 	height: 100%;
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
 }
-.ui-upload p.title {
+.ui_upload p.title {
 	background: transparent !important;
 	font-size: 175%;
 	text-align: center;
 	width: 99%;
 }
-.ui-upload > progress {
+.ui_upload > progress {
 	width: 90%;
 }
-.ui-upload.done > progress {
+.ui_upload.done > progress {
 	display: none;
 }
-.ui-upload > p.result {
+.ui_upload > p.result {
 	font-size: 150%;
 }
-.ui-upload:not(.done) > p.result {
+.ui_upload:not(.done) > p.result {
 	display: none;
 }
-.ui-upload > button {
+.ui_upload > button {
 	background: transparent;
 	border: 0;
 	font-size: xx-large;
 	margin: 0;
 	padding: 0;
 }
-.ui-upload > button[disabled] {
+.ui_upload > button[disabled] {
 	filter: grayscale(1) brightness(1.5);
 }
 </style>
 
-<div id="ui-upload-{{unique}}" class="ui-upload"
+<div id="ui_upload-{{unique}}" class="ui_upload"
 	ng-init='init(` + jsonConfig + `)'
 	ng-on-dragleave="ondragleave($event)" ng-on-dragenter="ondragenter($event)"
 	ng-on-dragover="ondragover($event)" ng-on-drop="ondrop($event)">
 	<p class="title">{{title}}</p>
 	<progress value="0" max="100"></progress>
 	<p class="result">✔️ <small>0s</small></p>
-	<input type="file" ng-on-change="onchange($event)" name="ui-upload-filename" />
+	<input type="file" ng-on-change="onchange($event)" name="ui_upload-filename" />
 	<button class="play" ng-click="playClick($event)" disabled="disabled">▶️</button>
 	<button class="stop" ng-click="stopClick($event)" disabled="disabled">⏹️</button>
 </div>
@@ -79,7 +79,7 @@ function initController($scope, events) {
 	});
 
 	function sendFile(file) {
-		const div = document.getElementById('ui-upload-' + $scope.unique);
+		const div = document.getElementById('ui_upload-' + $scope.unique);
 		div.classList.remove('done');
 		const progress = div.querySelector('progress');
 		$scope.stop = false;
@@ -209,7 +209,7 @@ function initController($scope, events) {
 	};
 
 	$scope.playClick = function (e) {
-		const div = document.getElementById('ui-upload-' + $scope.unique);
+		const div = document.getElementById('ui_upload-' + $scope.unique);
 		if ($scope.pause) {
 			div.querySelector('.play').innerHTML = '⏸️';
 			$scope.pause = false;
@@ -234,7 +234,7 @@ function initController($scope, events) {
 		$scope.pause = false;
 		$scope.downstreamReady = false;
 		$scope.chunkCallback = null;
-		const div = document.getElementById('ui-upload-' + $scope.unique);
+		const div = document.getElementById('ui_upload-' + $scope.unique);
 		div.querySelector('progress').value = 0;
 		if ($scope.duration) {
 			div.classList.add('done');
@@ -311,6 +311,9 @@ module.exports = function (RED) {
 			}
 
 			RED.nodes.createNode(node, config);
+			if (!config || !config.group) {
+				return;
+			}
 
 			//Defined in https://github.com/node-red/node-red-dashboard/blob/39b095586bdbd517ffbce1efff35227283edda4c/index.js
 			const done = ui.addWidget({
@@ -356,5 +359,5 @@ module.exports = function (RED) {
 		}
 	}
 
-	RED.nodes.registerType('ui-upload', uiUpload);
+	RED.nodes.registerType('ui_upload', uiUpload);
 };

@@ -16,7 +16,7 @@
 	},
 	{
 		"id": "48350dc.263dff4",
-		"type": "ui-upload",
+		"type": "ui_upload",
 		"z": "64eedace.95536c",
 		"group": "27f0900d.f39298",
 		"title": "",
@@ -107,7 +107,7 @@
 	},
 	{
 		"id": "a724cd7c.766688",
-		"type": "ui-upload",
+		"type": "ui_upload",
 		"z": "64eedace.95536c",
 		"group": "27f0900d.f39298",
 		"title": "",

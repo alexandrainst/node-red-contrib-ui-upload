@@ -1,6 +1,6 @@
 {
 	"name": "node-red-contrib-ui-upload",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "Node-RED Dashboard UI widget node for uploading a file content by Socket.io streaming",
 	"keywords": [
 		"upload",
@@ -18,15 +18,15 @@
 		"url": "https://alexandra.dk/alexandre.alapetite"
 	},
 	"license": "Apache-2.0",
-	"main": "ui-upload.js",
+	"main": "ui_upload.js",
 	"node-red": {
 		"nodes": {
-			"ui-upload": "ui-upload.js"
+			"ui_upload": "ui_upload.js"
 		}
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/alexandrainst/node-red-contrib-ui-upload"
+		"url": "https://github.com/alexandrainst/node-red-contrib-ui_upload"
 	},
 	"devDependencies": {
 		"jshint": "^2.12.0"
