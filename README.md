@@ -1,8 +1,10 @@
-﻿# node-red-contrib-ui-upload
+# node-red-contrib-ui-upload
 
 [Node-RED Dashboard](https://github.com/node-red/node-red-dashboard) UI widget node for **uploading** a file content by WebSocket (Socket.io) streaming.
 
 Supports: browse for file or drag & drop; pause & resume, replay; custom chunk size; backpressure.
+
+Meant to be combined with [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines).
 
 Screenshot in the Node-RED Dashboard:
 
@@ -12,15 +14,17 @@ In a Node-RED flow, this *Upload node* (using *text* transfer type) can advantag
 * *Split node* using the option *Handle as a stream of messages*: to read one line at a time (works well, also for very large uploaded files)
 * *Join node* using the *automatic* mode: to reassemble the uploaded chunks into one single message / string (only for relatively small uploaded files, which can fit in memory)
 
-Example: [flows.json](doc/flows.json)
+Example: [flow.json](doc/flow.json)
 
 ![Node-RED flow](doc/flow.png)
 
 But this node really shines when combined with the [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines) node, which can split in a more efficient way, e.g. safe for Unicode and with built-in backpressure for automatic buffering optimisation.
 
-Example: [flows.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/master/doc/flows.json)
+Example: [flow.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/master/doc/flow.json)
 
 ![Node-RED flow](https://raw.githubusercontent.com/alexandrainst/node-red-contrib-chunks-to-lines/master/doc/flow.png)
+
+See also a more advanced [example of upload of a large CSV file to an SQL database](https://flows.nodered.org/flow/687918dd5cb66a3bfc2a661e15ef4237).
 
 ## Transfer types
 
