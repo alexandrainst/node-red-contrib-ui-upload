@@ -11,6 +11,7 @@ Screenshot in the Node-RED Dashboard:
 ![Node-RED Dashboard upload widget](doc/dashboard.png)
 
 In a Node-RED flow, this *Upload node* (using *text* transfer type) can advantageously be connected to some standard nodes such as:
+
 * *Split node* using the option *Handle as a stream of messages*: to read one line at a time (works well, also for very large uploaded files)
 * *Join node* using the *automatic* mode: to reassemble the uploaded chunks into one single message / string (only for relatively small uploaded files, which can fit in memory)
 
