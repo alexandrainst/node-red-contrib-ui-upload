@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function html(config) {
 	const jsonConfig = JSON.stringify(config);
@@ -55,7 +55,7 @@ function html(config) {
 `;
 }
 
-//NB: This function goes through a toString + eval by Node-RED Dashboard, so no scope
+// NB: This function goes through a toString + eval by Node-RED Dashboard, so no scope
 function initController($scope, events) {
 	/* jshint browser:true */
 
@@ -68,7 +68,7 @@ function initController($scope, events) {
 	};
 
 	$scope.$watch('msg', function (msg) {
-		//Message received from back-end
+		// Message received from back-end
 		if (msg && msg.tick && !$scope.stop && !$scope.pause) {
 			if ($scope.chunkCallback) {
 				$scope.chunkCallback.f($scope.chunkCallback.e);
@@ -97,7 +97,7 @@ function initController($scope, events) {
 		const fileReader = new FileReader();
 		fileReader.onload = function (e) {
 			if ($scope.stop) {
-				//Send special paquet to inform the rest of the pipeline
+				// Send special paquet to inform the rest of the pipeline
 				$scope.send({
 					file: {
 						lastModified: file.lastModified,
@@ -161,7 +161,7 @@ function initController($scope, events) {
 
 		blob = file.slice(0, chunk);
 		if ($scope.config.transfer === 'text') {
-			//NB: Can only be a single-byte encoding / ASCII, so no Unicode / UTF-8!
+			// NB: Can only be a single-byte encoding / ASCII, so no Unicode / UTF-8!
 			fileReader.readAsText(blob, 'Windows-1252');
 		} else {
 			fileReader.readAsArrayBuffer(blob);
@@ -300,7 +300,7 @@ module.exports = function (RED) {
 	function uiUpload(config) {
 		const node = this;	// jshint ignore:line
 
-		//Declare the ability of this node to consume ticks from downstream for back-pressure
+		// Declare the ability of this node to consume ticks from downstream for back-pressure
 		node.tickConsumer = true;
 		let tickDownstreamId;
 
@@ -315,7 +315,7 @@ module.exports = function (RED) {
 				return;
 			}
 
-			//Defined in https://github.com/node-red/node-red-dashboard/blob/39b095586bdbd517ffbce1efff35227283edda4c/index.js
+			// Defined in https://github.com/node-red/node-red-dashboard/blob/39b095586bdbd517ffbce1efff35227283edda4c/index.js
 			const done = ui.addWidget({
 				node: node,
 				format: html(config),
@@ -328,20 +328,20 @@ module.exports = function (RED) {
 				storeFrontEndInputAsState: false,
 				persistantFrontEndValue: false,
 
-				//callback to prepare the message that is emitted to the front-end
+				// callback to prepare the message that is emitted to the front-end
 				beforeEmit: function (msg, value) {
 					return { msg: msg };
 				},
 
-				//callback to prepare the message that is sent to the output
+				// callback to prepare the message that is sent to the output
 				beforeSend: function (msg, orig) {
 					if (tickDownstreamId === undefined) {
-						//Search for any output node handling ticks for back-pressure,
-						//or any input node (which must take this responsability)
+						// Search for any output node handling ticks for back-pressure,
+						// or any input node (which must take this responsability)
 						tickDownstreamId = findOutputNodeId(node, n => RED.nodes.getNode(n.id).tickProvider) || findInputNodeId(node);
 					}
 					if (!tickDownstreamId) {
-						//If there is no tick provider downstream, send default tick for back-pressure
+						// If there is no tick provider downstream, send default tick for back-pressure
 						node.receive({ tick: true });
 					}
 					if (orig) {
@@ -349,12 +349,11 @@ module.exports = function (RED) {
 					}
 				},
 
-				//callback to initialize in controller
+				// callback to initialize in controller
 				initController: initController,
 			});
 			node.on('close', done);
-		}
-		catch (ex) {
+		} catch (ex) {
 			console.error(ex);
 		}
 	}

@@ -35,46 +35,48 @@
 </script>
 
 <script>
-function uiUploadConf(NAME) {
-	const ICON = 'white-globe.svg';
+	/* global RED:false, $:false */
 
-	return {
-		category: 'dashboard',
-		color: 'rgb(63, 173, 181)',
-		defaults: {
-			group: {type: 'ui_group', required: true},
-			title: {value: 'upload'},
-			name: {value: ''},
-			order: {value: 0},
-			width: {
-				value: 0,
-				validate: function (v) {
-					const width = +v || 0;
-					const currentGroup = $('#node-input-group').val() || this.group;
-					const groupNode = RED.nodes.node(currentGroup);
-					const valid = !groupNode || +width <= +groupNode.width;
-					$('#node-input-size').toggleClass('input-error', !valid);
-					return valid;
+	function uiUploadConf(NAME) {
+		const ICON = 'white-globe.svg';
+
+		return {
+			category: 'dashboard',
+			color: 'rgb(63, 173, 181)',
+			defaults: {
+				group: { type: 'ui_group', required: true },
+				title: { value: 'upload' },
+				name: { value: '' },
+				order: { value: 0 },
+				width: {
+					value: 0,
+					validate: function (v) {
+						const width = +v || 0;
+						const currentGroup = $('#node-input-group').val() || this.group;
+						const groupNode = RED.nodes.node(currentGroup);
+						const valid = !groupNode || +width <= +groupNode.width;
+						$('#node-input-size').toggleClass('input-error', !valid);
+						return valid;
+					},
 				},
+				height: { value: 5 },
+				chunk: { value: 256 },
+				transfer: { value: 'binary' },
 			},
-			height: {value: 5},
-			chunk: {value: 256},
-			transfer: {value: 'binary'},
-		},
-		inputs: 1,
-		outputs: 1,
-		icon: ICON,
-		paletteLabel: NAME,
-		label: function () { return this.name || NAME; },
-		oneditprepare: function () {
-			$('#node-input-size').elementSizer({
-				width: '#node-input-width',
-				height: '#node-input-height',
-				group: '#node-input-group',
-			});
-		},
-	};
-}
+			inputs: 1,
+			outputs: 1,
+			icon: ICON,
+			paletteLabel: NAME,
+			label: function () { return this.name || NAME; },
+			oneditprepare: function () {
+				$('#node-input-size').elementSizer({
+					width: '#node-input-width',
+					height: '#node-input-height',
+					group: '#node-input-group',
+				});
+			},
+		};
+	}
 
-RED.nodes.registerType('ui_upload', uiUploadConf('upload'));
+	RED.nodes.registerType('ui_upload', uiUploadConf('upload'));
 </script>
