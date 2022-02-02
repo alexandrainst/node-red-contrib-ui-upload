@@ -8,22 +8,22 @@ Meant to be combined with [node-red-contrib-chunks-to-lines](https://github.com/
 
 Screenshot in the Node-RED Dashboard:
 
-![Node-RED Dashboard upload widget](doc/dashboard.png)
+![Node-RED Dashboard upload widget](examples/dashboard.png)
 
 In a Node-RED flow, this *Upload node* (using *text* transfer type) can advantageously be connected to some standard nodes such as:
 
 * *Split node* using the option *Handle as a stream of messages*: to read one line at a time (works well, also for very large uploaded files)
 * *Join node* using the *automatic* mode: to reassemble the uploaded chunks into one single message / string (only for relatively small uploaded files, which can fit in memory)
 
-Example: [flow.json](doc/flow.json)
+Example: [flow.json](examples/flow.json)
 
-![Node-RED flow](doc/flow.png)
+![Node-RED flow](examples/flow.png)
 
 But this node really shines when combined with the [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines) node, which can split in a more efficient way, e.g. safe for Unicode and with built-in backpressure for automatic buffering optimisation.
 
-Example: [flow.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/master/doc/flow.json)
+Example: [flow.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/master/examples/flow.json)
 
-![Node-RED flow](https://raw.githubusercontent.com/alexandrainst/node-red-contrib-chunks-to-lines/master/doc/flow.png)
+![Node-RED flow](https://raw.githubusercontent.com/alexandrainst/node-red-contrib-chunks-to-lines/master/examples/flow.png)
 
 See also a more advanced [example of upload of a large CSV file to an SQL database](https://flows.nodered.org/flow/687918dd5cb66a3bfc2a661e15ef4237).
 
@@ -49,6 +49,6 @@ This backpressure mechanism also gives time to other nodes communicating on the 
 
 ## Credits
 
-License: [Apache 2.0](LICENSE.md), 2020.
+License: [Apache 2.0](LICENSE.md), 2020-2022.
 
 Originally made by [Alexandre Alapetite](https://alexandra.dk/alexandre.alapetite) at the [Alexandra Institute](https://alexandra.dk).
