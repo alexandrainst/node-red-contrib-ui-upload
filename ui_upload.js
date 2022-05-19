@@ -338,7 +338,7 @@ module.exports = function (RED) {
 					if (tickDownstreamId === undefined) {
 						// Search for any output node handling ticks for back-pressure,
 						// or any input node (which must take this responsability)
-						tickDownstreamId = findOutputNodeId(node, n => RED.nodes.getNode(n.id).tickProvider) || findInputNodeId(node);
+						tickDownstreamId = findOutputNodeId(node, n => RED.nodes.getNode(n?.id)?.tickProvider) || findInputNodeId(node);
 					}
 					if (!tickDownstreamId) {
 						// If there is no tick provider downstream, send default tick for back-pressure
