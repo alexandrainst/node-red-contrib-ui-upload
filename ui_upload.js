@@ -285,7 +285,7 @@ function findOutputNodeId(fromNode, filter = null) {
 			const wire = fromNode.wires[wireId];
 			for (const toNodeId of wire) {
 				const toNode = allNodes[toNodeId];
-				if (fromNode && fromNode.id && (!filter || filter(fromNode))) {
+				if (toNode && toNode.id && (!filter || filter(toNode))) {
 					return toNode.id;
 				}
 			}
