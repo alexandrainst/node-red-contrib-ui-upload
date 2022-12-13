@@ -14,6 +14,7 @@
 		"linebreak-style": ["error", "unix"],
 		"max-len":	["warn", 160],
 		"no-tabs": "off",
+		"object-shorthand": "off",
 		"semi": ["warn", "always"],
 		"space-before-function-paren": ["warn", {
 			"anonymous": "always",

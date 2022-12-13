@@ -330,7 +330,7 @@ module.exports = function (RED) {
 
 				// callback to prepare the message that is emitted to the front-end
 				beforeEmit: function (msg, value) {
-					return { msg: msg };
+					return { msg };
 				},
 
 				// callback to prepare the message that is sent to the output
