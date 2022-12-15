@@ -43,6 +43,7 @@ function html(config) {
 
 <div id="ui_upload-{{unique}}" class="ui_upload"
 	ng-init='init(` + jsonConfig + `)'
+	style="width:{{width}}"
 	ng-on-dragleave="ondragleave($event)" ng-on-dragenter="ondragenter($event)"
 	ng-on-dragover="ondragover($event)" ng-on-drop="ondrop($event)">
 	<p class="title">{{title}}</p>
@@ -65,6 +66,8 @@ function initController($scope, events) {
 		$scope.title = config.title || config.name || 'Upload';
 		$scope.chunkCallback = null;
 		$scope.downstreamReady = false;
+		// TODO: Find a cleaner approach for the width
+		$scope.width = (Math.max(config.width || 12, 4) * 52.5) + 'px';
 	};
 
 	$scope.$watch('msg', function (msg) {
