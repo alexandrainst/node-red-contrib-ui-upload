@@ -1,6 +1,6 @@
 {
 	"name": "node-red-contrib-ui-upload",
-	"version": "0.5.3",
+	"version": "0.6.0",
 	"description": "Node-RED Dashboard UI widget node for uploading a file content by Socket.io streaming",
 	"keywords": [
 		"upload",
@@ -37,7 +37,7 @@
 		"url": "https://github.com/alexandrainst/node-red-contrib-ui-upload"
 	},
 	"devDependencies": {
-		"eslint": "^8.29.0",
+		"eslint": "^8.31.0",
 		"eslint-config-standard": "^17.0.0",
 		"eslint-plugin-html": "^7.1.0",
 		"eslint-plugin-import": "^2.26.0",
