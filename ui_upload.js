@@ -277,26 +277,6 @@ function findInputNodeId(toNode, filter = null) {
 	return false;
 }
 
-/**
- * Return an outgoing node ID if the node has any output wired to it, false otherwise.
- * If filter callback is not null, then this function filters outgoing nodes.
- */
-function findOutputNodeId(fromNode, filter = null) {
-	if (fromNode && fromNode.wires && fromNode._flow && fromNode._flow.global) {
-		const allNodes = fromNode._flow.global.allNodes;
-		for (const wireId of Object.keys(fromNode.wires)) {
-			const wire = fromNode.wires[wireId];
-			for (const toNodeId of wire) {
-				const toNode = allNodes[toNodeId];
-				if (toNode && toNode.id && (!filter || filter(toNode))) {
-					return toNode.id;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 module.exports = function (RED) {
 	let ui;
 
@@ -341,7 +321,7 @@ module.exports = function (RED) {
 					if (tickDownstreamId === undefined) {
 						// Search for any output node handling ticks for back-pressure,
 						// or any input node (which must take this responsability)
-						tickDownstreamId = findOutputNodeId(node, n => RED.nodes.getNode(n.id).tickProvider) || findInputNodeId(node);
+						tickDownstreamId = findInputNodeId(node, (n) => n && n.tickConsumer) || findInputNodeId(node);
 					}
 					if (!tickDownstreamId) {
 						// If there is no tick provider downstream, send default tick for back-pressure
