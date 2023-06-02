@@ -49,7 +49,7 @@ function html(config) {
 	<p class="title">{{title}}</p>
 	<progress value="0" max="100"></progress>
 	<p class="result">✔️ <small>0s</small></p>
-	<input type="file" ng-on-change="onchange($event)" name="ui_upload-filename" {{accept}} />
+	<input type="file" ng-on-change="onchange($event)" name="ui_upload-filename" accept="{{accept}}" />
 	<button class="play" ng-click="playClick($event)" disabled="disabled">▶️</button>
 	<button class="stop" ng-click="stopClick($event)" disabled="disabled">⏹️</button>
 </div>
@@ -58,13 +58,11 @@ function html(config) {
 
 // NB: This function goes through a toString + eval by Node-RED Dashboard, so no scope
 function initController($scope, events) {
-	/* jshint browser:true */
-
 	$scope.init = function (config) {
 		$scope.config = config;
 		$scope.unique = $scope.$eval('$id');
 		$scope.title = config.title || config.name || 'Upload';
-		$scope.accept = config.accept == '' ? '' : 'accept="' + config.accept + '"';
+		$scope.accept = '' + config.accept;
 		$scope.chunkCallback = null;
 		$scope.downstreamReady = false;
 		// TODO: Find a cleaner approach for the width
