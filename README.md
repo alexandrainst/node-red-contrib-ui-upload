@@ -21,9 +21,9 @@ Example: [flow.json](examples/flow.json)
 
 But this node really shines when combined with the [node-red-contrib-chunks-to-lines](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines) node, which can split in a more efficient way, e.g. safe for Unicode and with built-in backpressure for automatic buffering optimisation.
 
-Example: [flow.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/master/examples/flow.json)
+Example: [flow.json](https://github.com/alexandrainst/node-red-contrib-chunks-to-lines/blob/main/examples/flow.json)
 
-![Node-RED flow](https://raw.githubusercontent.com/alexandrainst/node-red-contrib-chunks-to-lines/master/examples/flow.png)
+![Node-RED flow](https://raw.githubusercontent.com/alexandrainst/node-red-contrib-chunks-to-lines/main/examples/flow.png)
 
 See also a more advanced [example of upload of a large CSV file to an SQL database](https://flows.nodered.org/flow/687918dd5cb66a3bfc2a661e15ef4237).
 
