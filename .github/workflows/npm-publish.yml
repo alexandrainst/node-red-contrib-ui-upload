@@ -9,6 +9,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +21,9 @@ jobs:
       - run: npm test
 
   publish-npm:
+    permissions:
+      contents: read
+      packages: write
     needs: build
     runs-on: ubuntu-latest
     steps:
