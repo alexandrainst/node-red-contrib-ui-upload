@@ -1,6 +1,6 @@
 {
 	"name": "node-red-contrib-ui-upload",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"description": "Node-RED Dashboard UI widget node for uploading a file content by Socket.io streaming",
 	"keywords": [
 		"upload",
@@ -49,7 +49,7 @@
 		"eslint_fix": "eslint --fix .",
 		"markdownlint": "markdownlint-cli2",
 		"markdownlint_fix": "markdownlint-cli2 --fix",
-		"fix": "npm run rtlcss && npm run eslint_fix && npm run markdownlint_fix",
+		"fix": "npm run eslint_fix && npm run markdownlint_fix",
 		"pretest": "npm run eslint && npm run markdownlint",
 		"start": "node ./index.js",
 		"test": "npm -v"
